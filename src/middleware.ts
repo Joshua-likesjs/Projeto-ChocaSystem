@@ -10,7 +10,7 @@ export function middleware(req: NextRequest) {
     ua?.includes("ipad")
 
   if (isMobile) {
-    return NextResponse.redirect("https://seu-mobile.vercel.app")
+    return NextResponse.redirect("https://expo.dev/artifacts/eas/frQ62iJUVDZ9zbZHsVqBw6.apk")
   }
 
   return NextResponse.next()
