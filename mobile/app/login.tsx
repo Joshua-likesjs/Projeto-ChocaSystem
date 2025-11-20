@@ -44,11 +44,15 @@ export default function LoginScreen() {
   };
 
   const handleCadastroVPJS = async () => {
-    console.log("EMAIL:", emailVPJS);
-    console.log("SENHA:", passwordVPJS);
-
     if (!nomeVPJS || !emailVPJS || !passwordVPJS || !confirmPasswordVPJS) {
       Alert.alert('Erro', 'Preencha todos os campos');
+      return;
+    }
+
+    // >>> ALTERAÇÃO 1: Adicione esta validação de formato de email <<<
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(emailVPJS)) {
+      Alert.alert('Erro', 'Por favor, insira um endereço de e-mail válido.');
       return;
     }
 
@@ -64,6 +68,7 @@ export default function LoginScreen() {
 
     setLoadingVPJS(true);
     try {
+      // >>> ALTERAÇÃO 2: Adicione a variável 'passwordVPJS' aqui <<<
       await cadastroVPJS(nomeVPJS, emailVPJS);
       Alert.alert('Sucesso', 'Cadastro realizado com sucesso!', [
         { text: 'OK', onPress: () => routerVPJS.replace('/dashboard') }
