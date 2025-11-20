@@ -10,7 +10,7 @@ export function middleware(req: NextRequest) {
     ua?.includes("ipad")
 
   if (isMobile) {
-    return NextResponse.redirect("https://expo.dev/artifacts/eas/njMuWYf5L85BvMtZ6W41CX.apk")
+    return NextResponse.redirect("https://expo.dev/artifacts/eas/b1MAq2qh3DdZFfjC1sK6Ra.apk")
   }
 
   return NextResponse.next()
