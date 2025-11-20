@@ -1,5 +1,8 @@
 {
   "expo": {
+    "name": "Incubadora VPJS",
+    "slug": "Incubadora VPJS",
+    "icon": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSGnu5gybb1rK9jzyg2juCUZnPT3iMIt4IphQ&s",
     "extra": {
       "eas": {
         "projectId": "47f0ef15-ce97-42e0-a085-41e178ac606f"
