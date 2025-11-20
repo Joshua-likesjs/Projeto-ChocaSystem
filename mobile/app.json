@@ -1,7 +1,6 @@
 {
   "expo": {
-    "name": "SeuApp",
-    "slug": "seuapp",
+
     "icon": "./assets/ovo.png",
     "extra": {
       "eas": {
