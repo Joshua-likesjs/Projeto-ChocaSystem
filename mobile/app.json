@@ -15,7 +15,8 @@
       "url": "https://u.expo.dev/47f0ef15-ce97-42e0-a085-41e178ac606f"
     },
     "android": {
-      "package": "com.joshua.cpp.incubadoravpjsmobile"
+      "package": "com.joshua.cpp.incubadoravpjsmobile",
+      "icon": "./assets/ovo.png"
     },
     "ios": {}
   }
