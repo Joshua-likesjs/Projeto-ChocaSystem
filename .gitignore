@@ -1,50 +1,67 @@
-# Dependencies
+# ==========================
+#     DEPENDÊNCIAS
+# ==========================
 node_modules/
+mobile/node_modules/
+.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# ==========================
+#     EXPO / REACT NATIVE
+# ==========================
+.expo/
+mobile/.expo/
+.expo-shared/
+mobile/.expo-shared/
+
+# Metro bundler
+.expo/web-build/
+mobile/.expo/web-build/
+
+# Build do mobile
+mobile/android/
+mobile/ios/
+mobile/web-build/
+mobile/dist/
+
+# Logs do React Native
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+.pnpm-debug.log*
 
-# Production builds
+# ==========================
+#     NEXT.JS
+# ==========================
 .next/
 out/
-dist/
+
+# ==========================
+#     PRODUÇÃO
+# ==========================
 build/
+dist/
 
-# Environment variables
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-# Firebase service account (SENSITIVE)
-serviceAccountKey.json
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-
-# OS
+# ==========================
+#     VARIADOS
+# ==========================
 .DS_Store
-Thumbs.db
-
-# Logs
-*.log
-dev.log
+*.pem
 server.log
+dev.log
+test
+prompt
+local-*
+.claude
+.z-ai-config
 
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
-
-# Coverage directory used by tools like istanbul
-coverage/
-
-# Temporary folders
-tmp/
-temp/
+# ==========================
+#     ENV
+# ==========================
+.env*

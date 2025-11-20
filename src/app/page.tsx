@@ -1,49 +1,32 @@
 'use client';
 
-import { useState } from 'react';
-import { useAuth } from '@/hooks/useAuth';
-import LoginForm from '@/components/auth/LoginForm';
-import RegisterForm from '@/components/auth/RegisterForm';
-import Dashboard from '@/components/dashboard/Dashboard';
-import AboutScreen from '@/components/dashboard/AboutScreen';
-
-type ViewType = 'login' | 'register' | 'dashboard' | 'about';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuthVPJS } from '@/contexts/AuthContextVPJS';
+import { Loader2 } from 'lucide-react';
 
 export default function Home() {
-  const [currentView, setCurrentView] = useState<ViewType>('login');
-  const { user, loading } = useAuth();
+  const { userVPJS, loadingVPJS } = useAuthVPJS();
+  const routerVPJS = useRouter();
 
-  // Redirecionar para dashboard se usuário já estiver logado
-  if (loading) {
+  useEffect(() => {
+    if (!loadingVPJS) {
+      if (userVPJS) {
+        routerVPJS.push('/dashboard');
+      } else {
+        routerVPJS.push('/login');
+      }
+    }
+  }, [userVPJS, loadingVPJS, routerVPJS]);
+
+  if (loadingVPJS) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Carregando...</p>
-        </div>
+      <div className="flex flex-col items-center justify-center min-h-screen gap-8 p-4">
+        <Loader2 className="w-12 h-12 animate-spin text-primary" />
+        <p className="text-lg text-muted-foreground">Carregando...</p>
       </div>
     );
   }
 
-  // Se usuário estiver logado, mostrar dashboard
-  if (user) {
-    if (currentView === 'about') {
-      return <AboutScreen onBackClick={() => setCurrentView('dashboard')} />;
-    }
-    return <Dashboard onAboutClick={() => setCurrentView('about')} />;
-  }
-
-  // Se não estiver logado, mostrar tela de login ou registro
-  const handleLoginClick = () => setCurrentView('login');
-  const handleRegisterClick = () => setCurrentView('register');
-
-  return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      {currentView === 'login' ? (
-        <LoginForm onRegisterClick={handleRegisterClick} />
-      ) : (
-        <RegisterForm onLoginClick={handleLoginClick} />
-      )}
-    </div>
-  );
+  return null;
 }

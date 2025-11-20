@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
+import { AuthProviderVPJS } from "@/contexts/AuthContextVPJS";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,24 +15,24 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Sistema de Monitoramento de Incubadora",
-  description: "Sistema completo para monitoramento de incubadoras de ovos em tempo real",
-  keywords: ["Incubadora", "Monitoramento", "Ovos", "Firebase", "Next.js"],
-  authors: [{ name: "Incubadora Team" }],
+  title: "Incubadora VPJS 🥚",
+  description: "Sistema inteligente de monitoramento e controle para incubação de ovos com controle de temperatura, umidade e luminosidade em tempo real.",
+  keywords: ["Incubadora", "Avicultura", "IoT", "Monitoramento", "VPJS", "Firebase", "Next.js"],
+  authors: [{ name: "VPJS Team" }],
   icons: {
-    icon: "/logo.svg",
+    icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSGnu5gybb1rK9jzyg2juCUZnPT3iMIt4IphQ&s",
   },
   openGraph: {
-    title: "Sistema de Monitoramento de Incubadora",
-    description: "Monitoramento em tempo real de incubadoras de ovos",
-    url: "http://localhost:3000",
-    siteName: "Incubadora Monitor",
+    title: "Incubadora VPJS",
+    description: "Sistema inteligente de incubação de ovos com monitoramento em tempo real",
+    url: "https://vpjs-incubadora.com",
+    siteName: "VPJS Incubadora",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Sistema de Monitoramento de Incubadora",
-    description: "Monitoramento em tempo real de incubadoras de ovos",
+    title: "Incubadora VPJS",
+    description: "Sistema inteligente de incubação de ovos com monitoramento em tempo real",
   },
 };
 
@@ -45,7 +46,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}
       >
-        {children}
+        <AuthProviderVPJS>
+          {children}
+        </AuthProviderVPJS>
         <Toaster />
       </body>
     </html>
