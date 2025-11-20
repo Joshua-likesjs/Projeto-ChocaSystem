@@ -12,7 +12,7 @@ export function middleware(req: NextRequest) {
   if (isMobile) {
     return NextResponse.redirect("https://expo.dev/artifacts/eas/aCm3RZaF2AAZdM7EA4sh1r.apk")
   }
-
+//dd
   return NextResponse.next()
 }
 
