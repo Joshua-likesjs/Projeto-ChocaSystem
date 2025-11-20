@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   View, 
   Text, 
   TextInput, 
   TouchableOpacity, 
   StyleSheet, 
-  Alert, 
   ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
@@ -22,22 +21,32 @@ export default function LoginScreen() {
   const [passwordVPJS, setPasswordVPJS] = useState('');
   const [confirmPasswordVPJS, setConfirmPasswordVPJS] = useState('');
   const [loadingVPJS, setLoadingVPJS] = useState(false);
+  const [errorVPJS, setErrorVPJS] = useState('');
+  const [successVPJS, setSuccessVPJS] = useState('');
   
-  const { loginVPJS, cadastroVPJS } = useAuthVPJS();
+  const { userVPJS, loginVPJS, cadastroVPJS } = useAuthVPJS();
   const routerVPJS = useRouter();
+
+  // <<< MELHORIA 1: Redirecionamento automático e seguro >>>
+  useEffect(() => {
+    if (userVPJS) {
+      routerVPJS.replace('/dashboard');
+    }
+  }, [userVPJS, routerVPJS]);
 
   const handleLoginVPJS = async () => {
     if (!emailVPJS || !passwordVPJS) {
-      Alert.alert('Erro', 'Preencha todos os campos');
+      setErrorVPJS('Preencha todos os campos');
       return;
     }
 
     setLoadingVPJS(true);
+    setErrorVPJS('');
     try {
       await loginVPJS(emailVPJS, passwordVPJS);
-      routerVPJS.replace('/dashboard');
+      // O redirecionamento agora é feito pelo useEffect
     } catch (error: any) {
-      Alert.alert('Erro de Login', error.message);
+      setErrorVPJS('Erro ao fazer login. Verifique suas credenciais.');
     } finally {
       setLoadingVPJS(false);
     }
@@ -45,36 +54,46 @@ export default function LoginScreen() {
 
   const handleCadastroVPJS = async () => {
     if (!nomeVPJS || !emailVPJS || !passwordVPJS || !confirmPasswordVPJS) {
-      Alert.alert('Erro', 'Preencha todos os campos');
+      setErrorVPJS('Preencha todos os campos');
       return;
     }
 
-    // >>> ALTERAÇÃO 1: Adicione esta validação de formato de email <<<
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(emailVPJS)) {
-      Alert.alert('Erro', 'Por favor, insira um endereço de e-mail válido.');
+      setErrorVPJS('Por favor, insira um endereço de e-mail válido.');
       return;
     }
 
     if (passwordVPJS !== confirmPasswordVPJS) {
-      Alert.alert('Erro', 'As senhas não coincidem');
+      setErrorVPJS('As senhas não coincidem');
       return;
     }
 
     if (passwordVPJS.length < 6) {
-      Alert.alert('Erro', 'A senha deve ter pelo menos 6 caracteres');
+      setErrorVPJS('A senha deve ter pelo menos 6 caracteres');
       return;
     }
 
     setLoadingVPJS(true);
+    setErrorVPJS('');
+    setSuccessVPJS('');
+
     try {
-      // >>> ALTERAÇÃO 2: Adicione a variável 'passwordVPJS' aqui <<<
-      await cadastroVPJS(nomeVPJS, emailVPJS);
-      Alert.alert('Sucesso', 'Cadastro realizado com sucesso!', [
-        { text: 'OK', onPress: () => routerVPJS.replace('/dashboard') }
-      ]);
+      await cadastroVPJS(nomeVPJS, emailVPJS, passwordVPJS);
+      // <<< MELHORIA 2: Feedback de sucesso e redirecionamento com delay >>>
+      setSuccessVPJS('Cadastro realizado com sucesso! Redirecionando...');
+      setTimeout(() => {
+        routerVPJS.replace('/dashboard');
+      }, 2000);
     } catch (error: any) {
-      Alert.alert('Erro de Cadastro', error.message);
+      // <<< MELHORIA 3: Tratamento de erros específicos do Firebase >>>
+      if (error.code === 'auth/email-already-in-use') {
+        setErrorVPJS('Este email já está em uso. Tente fazer login.');
+      } else if (error.code === 'auth/weak-password') {
+        setErrorVPJS('A senha é muito fraca. Use pelo menos 6 caracteres.');
+      } else {
+        setErrorVPJS('Erro ao criar conta. Tente novamente.');
+      }
     } finally {
       setLoadingVPJS(false);
     }
@@ -115,6 +134,7 @@ export default function LoginScreen() {
                 onChangeText={setNomeVPJS}
                 placeholder="Seu nome"
                 autoCapitalize="words"
+                editable={!loadingVPJS} // <<< MELHORIA 4: Campo desabilitado no carregamento
               />
             </View>
           )}
@@ -128,6 +148,7 @@ export default function LoginScreen() {
               placeholder="seu@email.com"
               keyboardType="email-address"
               autoCapitalize="none"
+              editable={!loadingVPJS}
             />
           </View>
 
@@ -139,6 +160,7 @@ export default function LoginScreen() {
               onChangeText={setPasswordVPJS}
               placeholder={isCadastroVPJS ? "Mínimo 6 caracteres" : "••••••••"}
               secureTextEntry
+              editable={!loadingVPJS}
             />
           </View>
 
@@ -151,9 +173,14 @@ export default function LoginScreen() {
                 onChangeText={setConfirmPasswordVPJS}
                 placeholder="Confirme sua senha"
                 secureTextEntry
+                editable={!loadingVPJS}
               />
             </View>
           )}
+
+          {/* <<< MELHORIA 5: Exibe erros e sucessos na tela em vez de Alert >>> */}
+          {errorVPJS ? <Text style={styles.errorTextVPJS}>{errorVPJS}</Text> : null}
+          {successVPJS ? <Text style={styles.successTextVPJS}>{successVPJS}</Text> : null}
 
           <TouchableOpacity
             style={[styles.buttonVPJS, loadingVPJS && styles.buttonDisabledVPJS]}
@@ -172,6 +199,7 @@ export default function LoginScreen() {
           <TouchableOpacity
             style={styles.switchButtonVPJS}
             onPress={() => setIsCadastroVPJS(!isCadastroVPJS)}
+            disabled={loadingVPJS}
           >
             <Text style={styles.switchButtonTextVPJS}>
               {isCadastroVPJS 
@@ -206,7 +234,9 @@ export default function LoginScreen() {
   );
 }
 
+// Adicione os novos estilos para erro e sucesso
 const styles = StyleSheet.create({
+  // ... (seus estilos existentes)
   containerVPJS: {
     flex: 1,
     backgroundColor: '#fff7ed',
@@ -327,5 +357,17 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#6b7280',
     flex: 1,
+  },
+  errorTextVPJS: {
+    color: '#dc2626',
+    marginBottom: 12,
+    textAlign: 'center',
+    fontSize: 14,
+  },
+  successTextVPJS: {
+    color: '#16a34a',
+    marginBottom: 12,
+    textAlign: 'center',
+    fontSize: 14,
   },
 });

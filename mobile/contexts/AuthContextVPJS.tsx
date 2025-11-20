@@ -1,3 +1,4 @@
+// contexts/AuthContextVPJS.tsx
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { 
   initializeApp 
@@ -8,8 +9,10 @@ import {
   signOut,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
+  updateProfile,
   User 
 } from 'firebase/auth';
+import { getDatabase, ref, set } from 'firebase/database';
 
 // --- CONFIG DO FIREBASE ---
 const firebaseConfig = {
@@ -23,37 +26,22 @@ const firebaseConfig = {
   measurementId: "G-DCZMN9TRME"
 };
 
-// Previne inicialização dupla
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+export const auth = getAuth(app);
+const database = getDatabase(app);
 
-// -------------------------------------------------
-
+// --- INTERFACE DO CONTEXT ---
 interface AuthContextVPJS {
   userVPJS: User | null;
   loadingVPJS: boolean;
-
-  emailVPJS: string;
-  passwordVPJS: string;
-
-  setEmailVPJS: (email: string) => void;
-  setPasswordVPJS: (senha: string) => void;
-
   loginVPJS: (email: string, senha: string) => Promise<void>;
-  cadastroVPJS: (email: string, senha: string) => Promise<void>;
+  cadastroVPJS: (nome: string, email: string, senha: string) => Promise<void>;
   logoutVPJS: () => Promise<void>;
 }
 
 const AuthContextVPJS = createContext<AuthContextVPJS>({
   userVPJS: null,
   loadingVPJS: true,
-
-  emailVPJS: "",
-  passwordVPJS: "",
-
-  setEmailVPJS: () => {},
-  setPasswordVPJS: () => {},
-
   loginVPJS: async () => {},
   cadastroVPJS: async () => {},
   logoutVPJS: async () => {},
@@ -63,45 +51,60 @@ export function AuthProviderVPJS({ children }: { children: ReactNode }) {
   const [userVPJS, setUserVPJS] = useState<User | null>(null);
   const [loadingVPJS, setLoadingVPJS] = useState(true);
 
-  const [emailVPJS, setEmailVPJS] = useState("");
-  const [passwordVPJS, setPasswordVPJS] = useState("");
-
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (user) => {
+    const unsubscribeVPJS = onAuthStateChanged(auth, (user) => {
       setUserVPJS(user);
       setLoadingVPJS(false);
     });
 
-    return () => unsub();
+    return () => unsubscribeVPJS();
   }, []);
 
-  // --- LOGIN ---
+  // --- FUNÇÕES DE AUTENTICAÇÃO ---
   const loginVPJS = async (email: string, senha: string) => {
     await signInWithEmailAndPassword(auth, email, senha);
   };
 
-  // --- CADASTRO ---
-  const cadastroVPJS = async (email: string, senha: string) => {
-    await createUserWithEmailAndPassword(auth, email, senha);
+  const cadastroVPJS = async (nome: string, email: string, senha: string) => {
+    try {
+      // <<< CORREÇÃO 1: Usar os parâmetros da função corretamente >>>
+      const userCredentialVPJS = await createUserWithEmailAndPassword(auth, email, senha);
+      const user = userCredentialVPJS.user;
+      
+      // <<< CORREÇÃO 2: Usar a variável 'nome' recebida no parâmetro >>>
+      await updateProfile(user, { displayName: nome });
+
+      // Cria a estrutura inicial no banco ao cadastrar
+      // <<< CORREÇÃO 3: Usar as variáveis 'nome' e 'email' recebidas nos parâmetros >>>
+      await set(ref(database, `usuarios/${user.uid}`), {
+        nomeVPJS: nome,
+        emailVPJS: email,
+        dataCriacaoVPJS: new Date().toISOString(),
+        sensoresVPJS: {
+          luminosidadeVPJS: 0,
+          presencaVPJS: false,
+          umidadeVPJS: 0,
+          temperaturaVPJS: 0
+        },
+        atuadoresVPJS: {
+          aquecedorVPJS: false,
+          umidificadorVPJS: false
+        }
+      });
+    } catch (error) {
+      console.error("Erro no cadastro:", error);
+      throw error; 
+    }
   };
 
-  // --- LOGOUT ---
   const logoutVPJS = async () => {
     await signOut(auth);
-    setUserVPJS(null);
   };
 
   return (
     <AuthContextVPJS.Provider value={{ 
       userVPJS, 
       loadingVPJS,
-
-      emailVPJS,
-      passwordVPJS,
-
-      setEmailVPJS,
-      setPasswordVPJS,
-
       loginVPJS, 
       cadastroVPJS, 
       logoutVPJS 
