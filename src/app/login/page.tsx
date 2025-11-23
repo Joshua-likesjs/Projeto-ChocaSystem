@@ -121,11 +121,7 @@ export default function LoginPage() {
             <div className="flex justify-center">
               <div className="relative">
                 <Egg className="w-16 h-16 text-orange-500" />
-                <div className="absolute -top-2 -right-2 flex gap-1">
-                  <Thermometer className="w-4 h-4 text-red-500" />
-                  <Droplets className="w-4 h-4 text-blue-500" />
-                  <Lightbulb className="w-4 h-4 text-yellow-500" />
-                </div>
+               
               </div>
             </div>
             <h1 className="text-3xl font-bold text-gray-900">Incubadora de Ovos VPJS</h1>

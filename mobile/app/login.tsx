@@ -108,11 +108,6 @@ export default function LoginScreen() {
         <View style={styles.headerVPJS}>
           <View style={styles.iconContainerVPJS}>
             <Egg size={64} color="#f97316" />
-            <View style={styles.sensorIconsVPJS}>
-              <Thermometer size={16} color="#ef4444" />
-              <Droplets size={16} color="#3b82f6" />
-              <Lightbulb size={16} color="#eab308" />
-            </View>
           </View>
           <Text style={styles.titleVPJS}>Incubadora VPJS</Text>
           <Text style={styles.subtitleVPJS}>

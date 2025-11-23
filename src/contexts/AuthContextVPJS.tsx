@@ -4,8 +4,8 @@ import { createContext, useContext, useEffect, useState, ReactNode } from 'react
 import { 
   auth, 
   onAuthStateChanged, 
-  User 
 } from '@/lib/firebase';
+import type { User } from 'firebase/auth';
 
 interface AuthContextVPJS {
   userVPJS: User | null;

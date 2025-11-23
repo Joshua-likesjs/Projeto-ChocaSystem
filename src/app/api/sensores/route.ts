@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getDatabase, ref, set, get } from '@/lib/firebase';
+import { database, ref, set, get } from '@/lib/firebase';
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const database = getDatabase();
+
     const userRefVPJS = ref(database, `usuarios/${userIdVPJS}/sensoresVPJS`);
 
     await set(userRefVPJS, {
@@ -50,7 +50,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const database = getDatabase();
+  
     const userRefVPJS = ref(database, `usuarios/${userIdVPJS}/sensoresVPJS`);
     const snapshotVPJS = await get(userRefVPJS);
 
